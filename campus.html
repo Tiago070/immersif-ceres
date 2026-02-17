@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore os ambientes do IF Goiano - Campus Ceres através de tours virtuais em 360°">
+    <meta name="keywords" content="campus, laboratórios, salas de aula, ambientes">
+    <meta name="author" content="Tiago Cardoso Ferreira">
+    
+    <title>Campus Ceres - ImmersIF Ceres</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E3A8A' width='100' height='100'/><text x='50' y='75' font-size='60' fill='%23F97316' text-anchor='middle' font-weight='bold'>I</text></svg>">
+    
+    <style>
+        .ambiente-container {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .filtro-categoria {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+
+        .filtro-btn {
+            padding: 10px 20px;
+            border: 2px solid #E5E7EB;
+            background-color: white;
+            color: #1F2937;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 300ms ease-in-out;
+            font-size: 14px;
+        }
+
+        .filtro-btn:hover,
+        .filtro-btn.active {
+            background-color: #F97316;
+            color: white;
+            border-color: #F97316;
+        }
+
+        .filtro-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (min-width: 768px) {
+            .filtro-btn {
+                font-size: 16px;
+                padding: 12px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER E NAVEGAÇÃO -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">I</div>
+                <span>ImmersIF Ceres</span>
+            </div>
+            
+            <button class="hamburger" aria-label="Menu de navegação" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="projeto.html">O Projeto</a></li>
+                    <li><a href="campus.html">Campus Ceres</a></li>
+                    <li><a href="tour.html">Tour Virtual</a></li>
+                    <li><a href="desenvolvimento.html">Desenvolvimento</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero" style="background: linear-gradient(135deg, #F1F5F9 0%, #E0E7FF 100%);">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Campus Ceres - Conheça Nossos Ambientes</h1>
+                    <p>Explore virtualmente os laboratórios, salas de aula e espaços comuns do IF Goiano</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: INFORMAÇÕES ADICIONAIS -->
+        <section style="background-color: #F9FAFB;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Como Usar</h2>
+                    <div class="section-accent"></div>
+                </div>
+
+                <div class="cards-grid" style="margin-top: 32px;">
+                    <div class="card">
+                        <div style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); padding: 32px; display: flex; align-items: center; justify-content: center; height: 200px; font-size: 48px;">
+                            1️⃣
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Escolha um Ambiente</h3>
+                            <p class="card-description">Navegue através dos cards abaixo e escolha o ambiente que deseja explorar.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); padding: 32px; display: flex; align-items: center; justify-content: center; height: 200px; font-size: 48px;">
+                            2️⃣
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Clique em "Abrir em 360°"</h3>
+                            <p class="card-description">Abra o visualizador 360° para uma experiência imersiva completa.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 32px; display: flex; align-items: center; justify-content: center; height: 200px; font-size: 48px;">
+                            3️⃣
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Explore Livremente</h3>
+                            <p class="card-description">Use mouse, toque ou VR para explorar e conhecer cada local em detalhes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: AMBIENTES -->
+        <section>
+            <div class="container">
+                <!-- Filtro por Categoria -->
+                <div class="section-header">
+                    <h2>Ambientes Disponíveis</h2>
+                    <div class="section-accent"></div>
+                </div>
+
+                <!-- Filtros de Categoria -->
+                <div class="filtro-categoria" id="filtros">
+                    <button class="filtro-btn active" data-categoria="todos">
+                        Todos
+                    </button>
+                </div>
+
+                <!-- Lista de Ambientes por Categoria -->
+                <div class="ambiente-container" id="ambientes-container">
+                    <!-- Será preenchido por JavaScript -->
+                    <div style="text-align: center; padding: 48px 0;">
+                        <p>Carregando ambientes...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+
+        <!-- SEÇÃO: SUGESTÕES -->
+        <section>
+            <div class="container">
+                <div class="section-header">
+                    <h2>Quer Sugerir um Ambiente?</h2>
+                    <div class="section-accent"></div>
+                </div>
+
+                <div style="background-color: #F1F5F9; padding: 32px; border-radius: 12px; border-left: 4px solid #F97316; text-align: center; margin-top: 32px;">
+                    <p style="font-size: 18px; margin-bottom: 24px;">
+                        Conhece um espaço no campus que deveria ser visível através de tour virtual? Envie sua sugestão!
+                    </p>
+                    <a href="contato.html" class="btn btn-primary">
+                        Fazer Sugestão
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>
+                    <strong>Projeto ImmersIF Ceres</strong><br>
+                    Tecnologias Imersivas para Divulgação Científica e Educacional
+                </p>
+                <p style="font-size: 14px; margin-top: 16px;">
+                    Desenvolvido no âmbito do PIBITI – IF Goiano – Campus Ceres
+                </p>
+                <p style="font-size: 13px; margin-top: 12px;">
+                    Desenvolvido por <a href="http://linkedin.com/in/tiago-cardoso-ferreira-6236b8208" target="_blank" rel="noopener noreferrer" style="color: #F97316; text-decoration: none; font-weight: 500;">Tiago Cardoso Ferreira</a>
+                </p>
+            </div>
+            <div class="footer-links">
+                <a href="projeto.html">Sobre o Projeto</a>
+                <a href="contato.html">Contato</a>
+                <a href="desenvolvimento.html">Desenvolvimento</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dados dos Ambientes -->
+    <script src="data/ambientes.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Script de Campus -->
+    <script>
+        /**
+         * Inicializa a página Campus Ceres
+         */
+        function inicializarCampus() {
+            // Renderizar ambientes organizados por categoria
+            const ambientesAgrupados = agruparAmbientesPorCategoria();
+            renderizarAmbientesPorCategoria(ambientesAgrupados, 'ambientes-container');
+
+            // Criar filtros de categoria
+            criarFiltrosCategoria();
+
+            // Adicionar listeners aos filtros
+            adicionarListenersFiltros();
+        }
+
+        /**
+         * Cria botões de filtro para cada categoria
+         */
+        function criarFiltrosCategoria() {
+            const filtrosContainer = document.getElementById('filtros');
+            const categorias = obterCategorias();
+
+            // Limpar botão "todos" e reconstruir
+            filtrosContainer.innerHTML = '<button class="filtro-btn active" data-categoria="todos">Todos</button>';
+
+            categorias.forEach(categoria => {
+                const btn = document.createElement('button');
+                btn.className = 'filtro-btn';
+                btn.textContent = categoria;
+                btn.setAttribute('data-categoria', categoria);
+                filtrosContainer.appendChild(btn);
+            });
+        }
+
+        /**
+         * Adiciona listeners aos botões de filtro
+         */
+        function adicionarListenersFiltros() {
+            const botoesFiltro = document.querySelectorAll('.filtro-btn');
+
+            botoesFiltro.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remover classe ativa de todos os botões
+                    botoesFiltro.forEach(b => b.classList.remove('active'));
+                    // Adicionar classe ativa ao botão clicado
+                    btn.classList.add('active');
+
+                    // Filtrar ambientes
+                    const categoria = btn.getAttribute('data-categoria');
+                    filtrarAmbientes(categoria);
+                });
+            });
+        }
+
+        /**
+         * Filtra ambientes pela categoria selecionada
+         * @param {string} categoria - Categoria selecionada
+         */
+        function filtrarAmbientes(categoria) {
+            const container = document.getElementById('ambientes-container');
+            
+            if (categoria === 'todos') {
+                // Mostrar todos agrupados
+                const ambientesAgrupados = agruparAmbientesPorCategoria();
+                renderizarAmbientesPorCategoria(ambientesAgrupados, 'ambientes-container');
+            } else {
+                // Filtrar por categoria específica
+                const ambientesFiltrados = ambientes.filter(a => a.categoria === categoria);
+                
+                container.innerHTML = '';
+                
+                if (ambientesFiltrados.length === 0) {
+                    container.innerHTML = '<p class="text-center text-secondary">Nenhum ambiente encontrado.</p>';
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'cards-grid';
+
+                ambientesFiltrados.forEach(ambiente => {
+                    grid.appendChild(criarCardAmbiente(ambiente));
+                });
+
+                container.appendChild(grid);
+            }
+        }
+
+        // Inicializar quando o DOM carregar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                inicializarSite();
+                inicializarCampus();
+            });
+        } else {
+            inicializarCampus();
+        }
+    </script>
+</body>
+</html>
