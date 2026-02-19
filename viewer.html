@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Visualizador 360° do ambiente">
+    <meta name="keywords" content="360, visualizador, virtual reality, vr">
+    <meta name="author" content="Tiago Cardoso Ferreira">
+    
+    <title>Visualizador 360° - ImmersIF Ceres</title>
+    
+    <!-- A-Frame (WebXR Framework) -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    
+    <!-- CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #1F2937;
+            overflow: hidden;
+        }
+
+        a-scene {
+            width: 100%;
+            height: 100vh;
+        }
+
+        #viewer-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* UI Overlay */
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .ui-top {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: auto;
+            z-index: 11;
+        }
+
+        .ui-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Menu de navegação de ambientes (baixo do título) */
+        .ambientes-menu {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            overflow-x: auto;
+            max-width: 65vw;
+            padding-bottom: 4px;
+        }
+
+        .ambiente-btn {
+            background: rgba(255,255,255,0.06);
+            color: #F1F5F9;
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .ambiente-btn.active {
+            background: rgba(249,115,22,0.95);
+            color: #FFFFFF;
+            border-color: #F97316;
+            box-shadow: 0 6px 18px rgba(249,115,22,0.18);
+        }
+
+        /* Drawer de categorias (menu sanduiche) */
+        .categories-drawer {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(31,41,55,0.95);
+            padding: 10px;
+            border-radius: 8px;
+            max-height: 60vh;
+            overflow: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.06);
+            z-index: 20;
+            display: none;
+            min-width: 220px;
+        }
+
+        .categories-drawer.open { display: block; }
+
+        .category-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            background: transparent;
+            color: #F1F5F9;
+            border: none;
+            padding: 8px 6px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .category-btn:hover { background: rgba(255,255,255,0.02); }
+
+        /* Thumbnail dentro do botão de ambiente */
+        .ambiente-thumb {
+            width: 36px;
+            height: 24px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.25);
+            flex: 0 0 auto;
+        }
+
+        .ambiente-label { padding-left: 8px; font-size: 12px; }
+
+        /* Scrollbar styling for ambientes-menu (horizontal) */
+        .ambientes-menu {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.08) transparent;
+        }
+        .ambientes-menu::-webkit-scrollbar { height: 8px; }
+        .ambientes-menu::-webkit-scrollbar-track { background: transparent; }
+        .ambientes-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.06);
+            border-radius: 6px;
+        }
+        .ambientes-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* Scrollbar for categories drawer (vertical) */
+        .categories-drawer {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.06) transparent;
+        }
+        .categories-drawer::-webkit-scrollbar { width: 8px; }
+        .categories-drawer::-webkit-scrollbar-track { background: transparent; }
+        .categories-drawer::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        .categories-drawer::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .ui-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ui-btn {
+            background-color: rgba(31, 41, 55, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 300ms ease-in-out;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ui-btn:hover {
+            background-color: rgba(249, 115, 22, 0.9);
+            border-color: #F97316;
+        }
+
+        .ui-btn.secondary {
+            background-color: rgba(249, 115, 22, 0.8);
+        }
+
+        .ui-btn.secondary:hover {
+            background-color: #EA580C;
+        }
+
+        .ui-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            pointer-events: auto;
+            flex-wrap: wrap;
+        }
+
+        .ui-info {
+            background-color: rgba(31, 41, 55, 0.9);
+            color: #F1F5F9;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1F2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-screen.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(249, 115, 22, 0.3);
+            border-top-color: #F97316;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ui-title {
+                font-size: 16px;
+            }
+
+            .ui-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .ui-info {
+                font-size: 12px;
+                max-width: 90%;
+                padding: 12px;
+            }
+        }
+
+        /* Acessibilidade */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <p class="loading-text">Carregando ambiente 360°...</p>
+    </div>
+
+    <!-- Visualizador 360° -->
+    <div id="viewer-container">
+        <a-scene id="scene" vr-mode-ui="enabled: true" renderer="antialias: true; colorManagementConfiguration: legacy;">
+            <!-- Câmera -->
+            <!-- Adiciona cursor de mouse e raycaster para detectar interseções com elementos .hotspot e .vr-ui -->
+            <a-camera id="camera" position="0 1.6 0" look-controls="reverseMouseDrag: false" cursor="rayOrigin: mouse" raycaster="objects: .hotspot, .vr-ui">
+                <!-- Painel VR ancorado à câmera (fica visível em VR quando ativado) -->
+                <a-entity id="vr-menu-panel" position="0 -0.4 -1.2" visible="false"></a-entity>
+            </a-camera>
+
+            <!-- Imagem 360° (Photosphere) -->
+            <a-sky id="sky" 
+                src="assets/360/lab-informatica-360.jpg" 
+                rotation="0 0 0"
+                alt="Ambiente 360°">
+            </a-sky>
+
+            <!-- Hotspot que abre o menu VR (aparece apenas em VR) - posicionado à frente e abaixo -->
+            <a-entity id="hotspot-menu" position="0 0 -3" visible="false">
+                <a-sphere id="hotspot-menu-bola" class="hotspot" radius="0.25" position="0 0 0" material="color: #F97316; opacity: 0.95; shader: standard" data-action="toggle-vr-menu" clickable></a-sphere>
+                <a-text value="≡" position="0 0 0.27" align="center" color="#FFFFFF" scale="0.8 0.8 0.8" width="2"></a-text>
+                <a-plane position="0 -0.6 0.02" width="1.4" height="0.36" color="#000000" opacity="0.45" material="shader: flat"></a-plane>
+                <a-text id="hotspot-menu-label" value="Menu" position="0 -0.6 0.03" align="center" color="#FFFFFF" scale="1.5 1.5 1.5" width="2"></a-text>
+            </a-entity>
+
+            <!-- Hotspot para Voltar: esfera pequena com ícone e rótulo abaixo -->
+            <!-- Posicionado à direita/lado para não interferir com menu -->
+            <a-entity id="hotspot-voltar" position="2 0 -2">
+                <!-- Bola pequena clicável -->
+                <a-sphere id="hotspot-bola" class="hotspot" radius="0.25" position="0 0 0" material="color: #DC2626; opacity: 0.95; shader: standard" clickable
+                    animation__pulse="property: scale; dir: alternate; dur: 1200; loop: true; to: 1.12"/>
+
+                <!-- Ícone de seta dentro da esfera (text colocado levemente à frente) -->
+                <a-text value="←" position="0 0 0.27" align="center" color="#FFFFFF" scale="0.8 0.8 0.8" width="2"></a-text>
+
+                <!-- Texto 'Voltar' abaixo da esfera (interativo separado) -->
+                <!-- Fundo semitransparente para melhorar legibilidade do rótulo -->
+                <a-plane id="hotspot-label-bg" position="0 -0.6 0.02" width="1.4" height="0.36" color="#000000" opacity="0.45" material="shader: flat"></a-plane>
+                <!-- Rótulo reduzido e com fonte branca para melhor legibilidade -->
+                <a-text id="hotspot-label" value="Voltar" position="0 -0.6 0.03" align="center" color="#FFFFFF" scale="0.6 0.6 0.6" width="2" wrap-count="12"></a-text>
+            </a-entity>
+        </a-scene>
+
+        <!-- UI Overlay -->
+        <div class="ui-overlay">
+            <!-- Top Bar -->
+            <div class="ui-top">
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button id="btn-categorias" class="ui-btn" aria-label="Categorias" title="Categorias">☰</button>
+                        <div class="ui-title" id="title-ambiente">Laboratório de Informática</div>
+                    </div>
+                    <div id="ambientes-menu" class="ambientes-menu" aria-label="Mudar ambiente"></div>
+                </div>
+                <!-- Drawer que mostra as categorias -->
+                <div id="categories-drawer" class="categories-drawer" role="menu" aria-hidden="true"></div>
+                <div class="ui-buttons">
+                    <button class="ui-btn" id="btn-vr" onclick="entrarModoVR()" title="Entrar em Modo VR">
+                        🥽 Modo VR
+                    </button>
+                    <button class="ui-btn" id="btn-voltar" onclick="voltarParaCampus()" title="Voltar para Campus">
+                        ← Voltar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Info -->
+            <div class="ui-bottom">
+                <div class="ui-info" id="info-texto">
+                    Arraste o mouse ou use seus gestos para explorar. Clique no ponto vermelho para voltar.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dados dos Ambientes -->
+    <script src="data/ambientes.js"></script>
+
+    <!-- Script do Visualizador -->
+    <script>
+        /**
+         * VISUALIZADOR 360° - Script Principal
+         */
+
+        // Referências úteis
+        const scene = document.getElementById('scene');
+        const sky = document.getElementById('sky');
+        const titleElement = document.getElementById('title-ambiente');
+        const infoElement = document.getElementById('info-texto');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const hotspotVoltar = document.getElementById('hotspot-voltar');
+        const cameraElement = document.getElementById('camera');
+
+        // Estado do menu VR
+        let modoVRAtivo = false;
+        let vrMenuStack = []; // pilha de histórico de navegação
+        let vrMenuPageIndex = 0; // página atual
+        const VR_MENU_MAX_ITEMS = 5;
+        let vrMenuToggleBlocked = false; // proteção contra cliques rápidos dupl do hotspot
+
+        /**
+         * Inicializa o visualizador
+         */
+        function inicializarVisualizador() {
+            // Obter ID do ambiente da URL
+            const idAmbiente = obterParametroURL('id');
+
+            if (!idAmbiente) {
+                mostrarErro('Nenhum ambiente especificado. Voltando para campus...');
+                setTimeout(() => voltarParaCampus(), 2000);
+                return;
+            }
+
+            // Obter dados do ambiente
+            ambienteAtual = obterAmbientePorId(idAmbiente);
+
+            if (!ambienteAtual) {
+                mostrarErro('Ambiente não encontrado. Voltando para campus...');
+                setTimeout(() => voltarParaCampus(), 2000);
+                return;
+            }
+
+            // Carregar ambiente
+            carregarAmbiente();
+            // Construir menu de navegação de ambientes
+            renderizarMenuAmbientes();
+        }
+
+        /**
+         * Carrega o ambiente 360°
+         */
+        function carregarAmbiente() {
+            if (!ambienteAtual) return;
+
+            try {
+                // Atualizar título
+                titleElement.textContent = ambienteAtual.titulo;
+
+                // Atualizar informações
+                infoElement.textContent = ambienteAtual.descricao || 'Arraste para explorar este ambiente em 360°.';
+
+                // Carregar imagem 360°
+                const skyElement = document.querySelector('a-sky');
+                if (skyElement) {
+                    skyElement.setAttribute('src', ambienteAtual.imagem360);
+                }
+
+                // Listeners de carregamento
+                sky.addEventListener('materialtexture-set', onAmbienteCarregado);
+                sky.addEventListener('error', onErroCarregamento);
+
+                // Timeout para carregamento
+                setTimeout(() => {
+                    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                        onAmbienteCarregado();
+                    }
+                }, 5000); // Máximo 5 segundos
+            } catch (erro) {
+                console.error('Erro ao carregar ambiente:', erro);
+                mostrarErro('Erro ao carregar o ambiente.');
+            }
+        }
+
+        /**
+         * Renderiza o menu de navegação de ambientes (abaixo do título)
+         */
+        function renderizarMenuAmbientes() {
+            const menu = document.getElementById('ambientes-menu');
+            if (!menu) return;
+            menu.innerHTML = '';
+
+            // Se houver uma categoria selecionada, renderizar só seus ambientes; caso contrário, não mostrar botões
+            const categoriaSelecionada = menu.getAttribute('data-categoria');
+            if (!categoriaSelecionada) return;
+
+            const lista = obterAmbientesDisponiveis().filter(a => a.categoria === categoriaSelecionada);
+
+            lista.forEach(a => {
+                const btn = document.createElement('button');
+                btn.className = 'ambiente-btn';
+                btn.setAttribute('data-id', a.id);
+
+                // Thumbnail
+                const img = document.createElement('img');
+                img.className = 'ambiente-thumb';
+                img.src = a.imagemPreview;
+                img.alt = a.titulo + ' preview';
+                btn.appendChild(img);
+
+                // Label
+                const span = document.createElement('span');
+                span.className = 'ambiente-label';
+                span.textContent = a.titulo;
+                btn.appendChild(span);
+
+                btn.onclick = () => mudarAmbiente(a.id);
+
+                if (ambienteAtual && ambienteAtual.id === a.id) btn.classList.add('active');
+                menu.appendChild(btn);
+            });
+        }
+
+        /**
+         * Renderiza lista de categorias no drawer
+         */
+        function renderizarCategorias() {
+            const drawer = document.getElementById('categories-drawer');
+            if (!drawer) return;
+            drawer.innerHTML = '';
+
+            const categorias = obterCategorias();
+            categorias.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    // fechar drawer
+                    toggleCategorias(false);
+                    // setar categoria no menu principal e renderizar ambientes
+                    const menu = document.getElementById('ambientes-menu');
+                    if (menu) menu.setAttribute('data-categoria', cat);
+                    renderizarMenuAmbientes();
+                };
+                drawer.appendChild(btn);
+            });
+        }
+
+        function toggleCategorias(open) {
+            const drawer = document.getElementById('categories-drawer');
+            const btn = document.getElementById('btn-categorias');
+            if (!drawer || !btn) return;
+            const shouldOpen = typeof open === 'boolean' ? open : !drawer.classList.contains('open');
+            drawer.classList.toggle('open', shouldOpen);
+            drawer.setAttribute('aria-hidden', String(!shouldOpen));
+            btn.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
+        /**
+         * Muda o ambiente sem sair da visualização 360°
+         * @param {string} id - id do ambiente
+         */
+        function mudarAmbiente(id) {
+            const novo = obterAmbientePorId(id);
+            if (!novo) {
+                mostrarErro('Ambiente não encontrado.');
+                return;
+            }
+
+            // Mostrar loading enquanto troca
+            if (loadingScreen) loadingScreen.classList.remove('hidden');
+
+            ambienteAtual = novo;
+
+            // Atualizar título e info imediatamente
+            titleElement.textContent = ambienteAtual.titulo;
+            infoElement.textContent = ambienteAtual.descricao || '';
+
+            // Trocar a imagem do sky
+            crossfadeSky(ambienteAtual.imagem360, 600);
+
+            // Atualizar destaque no menu
+            const menu = document.getElementById('ambientes-menu');
+            if (menu) {
+                const buttons = menu.querySelectorAll('.ambiente-btn');
+                buttons.forEach(b => b.classList.toggle('active', b.getAttribute('data-id') === id));
+            }
+        }
+
+        /**
+         * Crossfade entre sky atual e novo arquivo de imagem
+         * @param {string} newSrc
+         * @param {number} duration - ms
+         */
+        function crossfadeSky(newSrc, duration = 600) {
+            const sceneEl = document.querySelector('a-scene');
+            const oldSky = document.querySelector('a-sky');
+            if (!sceneEl || !oldSky) return;
+
+            // Criar novo sky por cima
+            const newSky = document.createElement('a-sky');
+            newSky.setAttribute('src', newSrc);
+            newSky.setAttribute('rotation', oldSky.getAttribute('rotation') || '0 0 0');
+            newSky.setAttribute('material', 'shader: standard; opacity: 0; transparent: true');
+            sceneEl.appendChild(newSky);
+
+            const start = performance.now();
+            function step(now) {
+                const t = Math.min(1, (now - start) / duration);
+                const opacityNew = t;
+                const opacityOld = 1 - t;
+                try {
+                    newSky.setAttribute('material', `shader: standard; opacity: ${opacityNew}; transparent: true`);
+                    oldSky.setAttribute('material', `shader: standard; opacity: ${opacityOld}; transparent: true`);
+                } catch (e) {
+                    // não crítico
+                }
+                if (t < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    // Substituir oldSky: manter id 'sky'
+                    oldSky.setAttribute('src', newSrc);
+                    oldSky.setAttribute('material', 'shader: standard; opacity: 1; transparent: false');
+                    // Remover newSky
+                    newSky.remove();
+                    onAmbienteCarregado();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+
+        /**
+         * Callback quando ambiente é carregado
+         */
+        function onAmbienteCarregado() {
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+            }
+            console.log('Ambiente carregado:', ambienteAtual.titulo);
+        }
+
+        /**
+         * Callback de erro no carregamento
+         */
+        function onErroCarregamento(erro) {
+            console.error('Erro ao carregar imagem 360°:', erro);
+            mostrarErro('Erro ao carregar a imagem 360°. Tentando novamente...');
+        }
+
+        /**
+         * Obtém parâmetro da URL
+         */
+        function obterParametroURL(param) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(param);
+        }
+
+        /**
+         * Entra em modo VR
+         */
+        function entrarModoVR() {
+            if (scene) {
+                scene.enterVR();
+                modoVRAtivo = true;
+                mostrarNotificacao('Modo VR ativado!', 'success', 3000);
+            }
+        }
+
+        /**
+         * Volta para a página de campus
+         */
+        function voltarParaCampus() {
+            window.location.href = 'campus.html';
+        }
+
+        /**
+         * Mostra notificação de erro
+         */
+        function mostrarErro(mensagem) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                background-color: #DC2626;
+                color: white;
+                padding: 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                z-index: 100;
+                max-width: 400px;
+            `;
+            errorDiv.textContent = mensagem;
+            document.body.appendChild(errorDiv);
+
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        /**
+         * Mostra notificação
+         */
+        function mostrarNotificacao(mensagem, tipo = 'info', duracao = 3000) {
+            const cores = {
+                success: '#10B981',
+                error: '#DC2626',
+                info: '#3B82F6'
+            };
+
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background-color: ${cores[tipo] || cores.info};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                z-index: 100;
+                animation: slideInRight 0.3s ease-in-out;
+            `;
+            notif.textContent = mensagem;
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.remove();
+            }, duracao);
+        }
+
+        /**
+         * Dispatcher para ações declaradas em elementos via `data-action`
+         * Suporta: `toggle-vr-menu`, `mudar-ambiente:<id>`, `vr-show-ambientes:<categoria>`, etc.
+         */
+        function handleAction(action, el) {
+            if (!action) return;
+            const parts = action.split(':');
+            const cmd = parts[0];
+            const payload = parts[1] ? decodeURIComponent(parts[1]) : null;
+            
+            // Debug: uncomment para ver ações
+            // console.log('handleAction:', cmd, payload);
+            
+            if (cmd === 'toggle-vr-menu') {
+                toggleVrMenu();
+            } else if (cmd === 'vr-show-ambientes' && payload) {
+                vrMenuStack.push({ type: 'categories', page: vrMenuPageIndex });
+                vrMenuPageIndex = 0;
+                renderizarVRAmbientes(payload);
+            } else if (cmd === 'vr-back') {
+                if (vrMenuStack.length > 0) {
+                    const prev = vrMenuStack.pop();
+                    vrMenuPageIndex = prev.page || 0;
+                    if (prev.type === 'categories') {
+                        renderizarVRCategorias();
+                    }
+                }
+            } else if (cmd === 'vr-next-page') {
+                vrMenuPageIndex += 1;
+                // Detecta contexto e renderiza novamente
+                if (vrMenuStack.length > 0 && vrMenuStack[vrMenuStack.length - 1].type === 'ambientes') {
+                    const cat = vrMenuStack[vrMenuStack.length - 1].categoria;
+                    renderizarVRAmbientes(cat);
+                } else {
+                    renderizarVRCategorias();
+                }
+            } else if (cmd === 'vr-prev-page') {
+                vrMenuPageIndex = Math.max(0, vrMenuPageIndex - 1);
+                if (vrMenuStack.length > 0 && vrMenuStack[vrMenuStack.length - 1].type === 'ambientes') {
+                    const cat = vrMenuStack[vrMenuStack.length - 1].categoria;
+                    renderizarVRAmbientes(cat);
+                } else {
+                    renderizarVRCategorias();
+                }
+            } else if (cmd === 'mudar-ambiente' && payload) {
+                toggleVrMenu(false);
+                vrMenuStack = [];
+                vrMenuPageIndex = 0;
+                mudarAmbiente(payload);
+            }
+        }
+
+        function toggleVrMenu(force) {
+            const panel = document.getElementById('vr-menu-panel');
+            if (!panel) return;
+            
+            // Proteção contra cliques rápidos duplicados no hotspot
+            if (vrMenuToggleBlocked) return;
+            vrMenuToggleBlocked = true;
+            setTimeout(() => { vrMenuToggleBlocked = false; }, 300);
+            
+            if (typeof force === 'boolean') {
+                panel.setAttribute('visible', force);
+                if (!force) {
+                    vrMenuStack = [];
+                    vrMenuPageIndex = 0;
+                    while (panel.firstChild) {
+                        panel.removeChild(panel.firstChild);
+                    }
+                }
+                return;
+            }
+            const vis = panel.getAttribute('visible') === true || panel.getAttribute('visible') === 'true';
+            const next = !vis;
+            panel.setAttribute('visible', next);
+            if (next) {
+                vrMenuStack = [];
+                vrMenuPageIndex = 0;
+                renderizarVRCategorias();
+            } else {
+                vrMenuStack = [];
+                vrMenuPageIndex = 0;
+                while (panel.firstChild) {
+                    panel.removeChild(panel.firstChild);
+                }
+            }
+        }
+
+        /**
+         * Renderiza botões dentro do painel VR (children de `#vr-menu-panel`).
+         * Cria uma grade simples com 3 colunas usando as imagens de preview.
+         */
+        /**
+         * Renderiza a lista de categorias no painel VR (compacto, mobile-friendly)
+         */
+        function renderizarVRCategorias() {
+            const panel = document.getElementById('vr-menu-panel');
+            if (!panel) return;
+            while (panel.firstChild) panel.removeChild(panel.firstChild);
+
+            // Semi-transparent background with rounded appearance
+            const bg = document.createElement('a-plane');
+            bg.setAttribute('width', '1.4');
+            bg.setAttribute('height', '1.15');
+            bg.setAttribute('color', '#1a1a1a');
+            bg.setAttribute('opacity', '0.85');
+            bg.setAttribute('position', '0 0 -0.05');
+            bg.setAttribute('material', 'shader: flat;');
+            panel.appendChild(bg);
+
+            // Prominent close button (X) - orange, top-right
+            const closeBtn = document.createElement('a-plane');
+            closeBtn.setAttribute('width', '0.2');
+            closeBtn.setAttribute('height', '0.2');
+            closeBtn.setAttribute('color', '#FF6B35');
+            closeBtn.setAttribute('opacity', '0.9');
+            closeBtn.setAttribute('position', '0.65 0.5 0');
+            closeBtn.setAttribute('class', 'vr-ui');
+            closeBtn.setAttribute('data-action', 'toggle-vr-menu');
+            closeBtn.setAttribute('clickable', '');
+            const closeTxt = document.createElement('a-text');
+            closeTxt.setAttribute('value', '✕');
+            closeTxt.setAttribute('align', 'center');
+            closeTxt.setAttribute('color', '#FFFFFF');
+            closeTxt.setAttribute('width', '0.5');
+            closeTxt.setAttribute('position', '0.65 0.5 0.01');
+            closeTxt.setAttribute('scale', '0.55 0.55 0.55');
+            panel.appendChild(closeBtn);
+            panel.appendChild(closeTxt);
+
+            // Title - gold color for visual hierarchy
+            const title = document.createElement('a-text');
+            title.setAttribute('value', 'Categorias');
+            title.setAttribute('align', 'center');
+            title.setAttribute('color', '#FFD700');
+            title.setAttribute('width', '1.0');
+            title.setAttribute('position', '0 0.42 0');
+            title.setAttribute('scale', '0.55 0.55 0.55');
+            panel.appendChild(title);
+
+            const cats = obterCategorias();
+            const startIdx = vrMenuPageIndex * VR_MENU_MAX_ITEMS;
+            const pageItems = cats.slice(startIdx, startIdx + VR_MENU_MAX_ITEMS);
+            const itemHeight = 0.17;
+            const startY = 0.30;
+
+            pageItems.forEach((cat, i) => {
+                const y = startY - i * itemHeight;
+                const btn = document.createElement('a-plane');
+                btn.setAttribute('width', '1.1');
+                btn.setAttribute('height', '0.16');
+                btn.setAttribute('color', '#2E40A0');
+                btn.setAttribute('opacity', '0.75');
+                btn.setAttribute('position', `0 ${y} 0`);
+                btn.setAttribute('class', 'vr-ui');
+                btn.setAttribute('data-action', `vr-show-ambientes:${encodeURIComponent(cat)}`);
+                btn.setAttribute('clickable', '');
+
+                const txt = document.createElement('a-text');
+                txt.setAttribute('value', cat);
+                txt.setAttribute('align', 'center');
+                txt.setAttribute('color', '#FFFFFF');
+                txt.setAttribute('width', '1.0');
+                txt.setAttribute('position', `0 ${y} 0.01`);
+                txt.setAttribute('scale', '0.52 0.52 0.52');
+
+                panel.appendChild(btn);
+                panel.appendChild(txt);
+            });
+
+            // Pagination controls at bottom - INSIDE the box
+            const bottomY = startY - pageItems.length * itemHeight - 0.12;
+            const hasPrev = startIdx > 0;
+            const hasNext = startIdx + VR_MENU_MAX_ITEMS < cats.length;
+
+            if (hasNext) {
+                const nextBtn = document.createElement('a-plane');
+                nextBtn.setAttribute('width', '0.40');
+                nextBtn.setAttribute('height', '0.15');
+                nextBtn.setAttribute('color', '#2E40A0');
+                nextBtn.setAttribute('opacity', '0.8');
+                nextBtn.setAttribute('position', '0.25 ' + bottomY + ' 0');
+                nextBtn.setAttribute('class', 'vr-ui');
+                nextBtn.setAttribute('data-action', 'vr-next-page');
+                nextBtn.setAttribute('clickable', '');
+                const nextTxt = document.createElement('a-text');
+                nextTxt.setAttribute('value', 'Mais →');
+                nextTxt.setAttribute('align', 'center');
+                nextTxt.setAttribute('color', '#FFFFFF');
+                nextTxt.setAttribute('width', '0.7');
+                nextTxt.setAttribute('position', '0.25 ' + bottomY + ' 0.01');
+                nextTxt.setAttribute('scale', '0.45 0.45 0.45');
+                panel.appendChild(nextBtn);
+                panel.appendChild(nextTxt);
+            }
+
+            if (hasPrev) {
+                const prevBtn = document.createElement('a-plane');
+                prevBtn.setAttribute('width', '0.40');
+                prevBtn.setAttribute('height', '0.15');
+                prevBtn.setAttribute('color', '#2E40A0');
+                prevBtn.setAttribute('opacity', '0.8');
+                prevBtn.setAttribute('position', '-0.25 ' + bottomY + ' 0');
+                prevBtn.setAttribute('class', 'vr-ui');
+                prevBtn.setAttribute('data-action', 'vr-prev-page');
+                prevBtn.setAttribute('clickable', '');
+                const prevTxt = document.createElement('a-text');
+                prevTxt.setAttribute('value', '← Ant.');
+                prevTxt.setAttribute('align', 'center');
+                prevTxt.setAttribute('color', '#FFFFFF');
+                prevTxt.setAttribute('width', '0.7');
+                prevTxt.setAttribute('position', '-0.25 ' + bottomY + ' 0.01');
+                prevTxt.setAttribute('scale', '0.45 0.45 0.45');
+                panel.appendChild(prevBtn);
+                panel.appendChild(prevTxt);
+            }
+        }
+
+        /**
+         * Renderiza os ambientes de uma categoria no painel VR com paginação
+         */
+        function renderizarVRAmbientes(categoria) {
+            const panel = document.getElementById('vr-menu-panel');
+            if (!panel) return;
+            while (panel.firstChild) panel.removeChild(panel.firstChild);
+
+            // Semi-transparent background with rounded appearance
+            const bg = document.createElement('a-plane');
+            bg.setAttribute('width', '1.4');
+            bg.setAttribute('height', '1.15');
+            bg.setAttribute('color', '#1a1a1a');
+            bg.setAttribute('opacity', '0.85');
+            bg.setAttribute('position', '0 0 -0.05');
+            bg.setAttribute('material', 'shader: flat;');
+            panel.appendChild(bg);
+
+            // Title - gold color for visual hierarchy (top)
+            const title = document.createElement('a-text');
+            title.setAttribute('value', categoria);
+            title.setAttribute('align', 'center');
+            title.setAttribute('color', '#FFD700');
+            title.setAttribute('width', '1.0');
+            title.setAttribute('position', '0 0.48 0');
+            title.setAttribute('scale', '0.60 0.60 0.60');
+            panel.appendChild(title);
+
+            // Close button (X) - orange, top-right INSIDE box
+            const closeBtn = document.createElement('a-plane');
+            closeBtn.setAttribute('width', '0.18');
+            closeBtn.setAttribute('height', '0.18');
+            closeBtn.setAttribute('color', '#FF6B35');
+            closeBtn.setAttribute('opacity', '0.9');
+            closeBtn.setAttribute('position', '0.58 0.48 0');
+            closeBtn.setAttribute('class', 'vr-ui');
+            closeBtn.setAttribute('data-action', 'toggle-vr-menu');
+            closeBtn.setAttribute('clickable', '');
+            const closeTxt = document.createElement('a-text');
+            closeTxt.setAttribute('value', '✕');
+            closeTxt.setAttribute('align', 'center');
+            closeTxt.setAttribute('color', '#FFFFFF');
+            closeTxt.setAttribute('width', '0.5');
+            closeTxt.setAttribute('position', '0.58 0.48 0.01');
+            closeTxt.setAttribute('scale', '0.50 0.50 0.50');
+            panel.appendChild(closeBtn);
+            panel.appendChild(closeTxt);
+
+            // Back to categories button - INSIDE box on the left
+            const backBtn = document.createElement('a-plane');
+            backBtn.setAttribute('width', '0.40');
+            backBtn.setAttribute('height', '0.15');
+            backBtn.setAttribute('color', '#1E6B5D');
+            backBtn.setAttribute('opacity', '0.8');
+            backBtn.setAttribute('position', '-0.25 0.48 0');
+            backBtn.setAttribute('class', 'vr-ui');
+            backBtn.setAttribute('data-action', 'vr-back');
+            backBtn.setAttribute('clickable', '');
+            const backTxt = document.createElement('a-text');
+            backTxt.setAttribute('value', '← Cat.');
+            backTxt.setAttribute('align', 'center');
+            backTxt.setAttribute('color', '#FFFFFF');
+            backTxt.setAttribute('width', '0.7');
+            backTxt.setAttribute('position', '-0.25 0.48 0.01');
+            backTxt.setAttribute('scale', '0.45 0.45 0.45');
+            panel.appendChild(backBtn);
+            panel.appendChild(backTxt);
+
+            const items = obterAmbientesDisponiveis().filter(a => a.categoria === categoria);
+            const startIdx = vrMenuPageIndex * VR_MENU_MAX_ITEMS;
+            const pageItems = items.slice(startIdx, startIdx + VR_MENU_MAX_ITEMS);
+            const itemHeight = 0.17;
+            const startY = 0.30;
+
+            pageItems.forEach((amb, idx) => {
+                const y = startY - idx * itemHeight;
+                const btn = document.createElement('a-plane');
+                btn.setAttribute('width', '1.1');
+                btn.setAttribute('height', '0.14');
+                btn.setAttribute('color', '#1E6B5D');
+                btn.setAttribute('opacity', '0.75');
+                btn.setAttribute('position', `0 ${y} 0`);
+                btn.setAttribute('class', 'vr-ui');
+                btn.setAttribute('data-action', `mudar-ambiente:${amb.id}`);
+                btn.setAttribute('clickable', '');
+
+                const txt = document.createElement('a-text');
+                txt.setAttribute('value', amb.titulo);
+                txt.setAttribute('align', 'center');
+                txt.setAttribute('color', '#FFFFFF');
+                txt.setAttribute('width', '1.0');
+                txt.setAttribute('position', `0 ${y} 0.01`);
+                txt.setAttribute('scale', '0.52 0.52 0.52');
+
+                panel.appendChild(btn);
+                panel.appendChild(txt);
+            });
+
+            // Pagination controls at bottom - INSIDE the box
+            const bottomY = startY - pageItems.length * itemHeight - 0.12;
+            const hasPrev = startIdx > 0;
+            const hasNext = startIdx + VR_MENU_MAX_ITEMS < items.length;
+
+            if (hasNext) {
+                const nextBtn = document.createElement('a-plane');
+                nextBtn.setAttribute('width', '0.40');
+                nextBtn.setAttribute('height', '0.15');
+                nextBtn.setAttribute('color', '#1E6B5D');
+                nextBtn.setAttribute('opacity', '0.8');
+                nextBtn.setAttribute('position', '0.25 ' + bottomY + ' 0');
+                nextBtn.setAttribute('class', 'vr-ui');
+                nextBtn.setAttribute('data-action', 'vr-next-page');
+                nextBtn.setAttribute('clickable', '');
+                const nextTxt = document.createElement('a-text');
+                nextTxt.setAttribute('value', 'Mais →');
+                nextTxt.setAttribute('align', 'center');
+                nextTxt.setAttribute('color', '#FFFFFF');
+                nextTxt.setAttribute('width', '0.7');
+                nextTxt.setAttribute('position', '0.25 ' + bottomY + ' 0.01');
+                nextTxt.setAttribute('scale', '0.45 0.45 0.45');
+                panel.appendChild(nextBtn);
+                panel.appendChild(nextTxt);
+            }
+
+            if (hasPrev) {
+                const prevBtn = document.createElement('a-plane');
+                prevBtn.setAttribute('width', '0.40');
+                prevBtn.setAttribute('height', '0.15');
+                prevBtn.setAttribute('color', '#1E6B5D');
+                prevBtn.setAttribute('opacity', '0.8');
+                prevBtn.setAttribute('position', '-0.25 ' + bottomY + ' 0');
+                prevBtn.setAttribute('class', 'vr-ui');
+                prevBtn.setAttribute('data-action', 'vr-prev-page');
+                prevBtn.setAttribute('clickable', '');
+                const prevTxt = document.createElement('a-text');
+                prevTxt.setAttribute('value', '← Ant.');
+                prevTxt.setAttribute('align', 'center');
+                prevTxt.setAttribute('color', '#FFFFFF');
+                prevTxt.setAttribute('width', '0.7');
+                prevTxt.setAttribute('position', '-0.25 ' + bottomY + ' 0.01');
+                prevTxt.setAttribute('scale', '0.45 0.45 0.45');
+                panel.appendChild(prevBtn);
+                panel.appendChild(prevTxt);
+            }
+        }
+
+        /**
+         * Monitora cliques fora do painel VR para fechá-lo (mobile-friendly)
+         */
+        function setupPanelClickDetection() {
+            const panel = document.getElementById('vr-menu-panel');
+            const camera = document.querySelector('#camera');
+            if (!panel || !camera) return;
+
+            // Ao clicar no raycaster da câmera, verifica se foi fora do painel
+            camera.addEventListener('raycaster-intersection', (Event) => {
+                const intersected = Event.detail.intersections[0];
+                if (!intersected || !intersected.object.el) {
+                    const panelVis = panel.getAttribute('visible') === true || panel.getAttribute('visible') === 'true';
+                    if (panelVis && modoVRAtivo) {
+                        // Clique fora do painel - verifica se não é um menu item
+                        const isMenuItem = intersected && intersected.object && 
+                                          intersected.object.el && 
+                                          (intersected.object.el.classList.contains('vr-ui') || 
+                                           intersected.object.el.closest('[data-action]'));
+                        if (!isMenuItem) {
+                            // Evitar fechamento imediato em desktop
+                            if (modoVRAtivo) {
+                                // Comentado: permitir fechar só com botão X por ora
+                                // toggleVrMenu(false);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Hotspot clicável (evita acionar quando usuário está arrastando)
+         * - Detecta movimento do ponteiro e bloqueia ação se houver drag
+         */
+        AFRAME.registerComponent('clickable', {
+            init: function() {
+                this._start = null;
+                this._dragging = false;
+                this._isPointed = false; // controller raycaster pointing
+
+                // Registrar eventos globais para detectar movimento entre down/up (touch/mouse)
+                this._onPointerDown = (e) => {
+                    const ev = e.touches ? e.touches[0] : e;
+                    this._start = { x: ev.clientX || 0, y: ev.clientY || 0, t: Date.now() };
+                    this._dragging = false;
+                };
+
+                this._onPointerMove = (e) => {
+                    if (!this._start) return;
+                    const ev = e.touches ? e.touches[0] : e;
+                    const dx = (ev.clientX || 0) - this._start.x;
+                    const dy = (ev.clientY || 0) - this._start.y;
+                    if (Math.hypot(dx, dy) > 8) {
+                        this._dragging = true;
+                    }
+                };
+
+                this._onPointerUp = () => {
+                    this._start = null;
+                };
+
+                window.addEventListener('pointerdown', this._onPointerDown, { passive: true });
+                window.addEventListener('pointermove', this._onPointerMove, { passive: true });
+                window.addEventListener('pointerup', this._onPointerUp, { passive: true });
+
+                // Click do mouse/tap somente quando não houve drag
+                // Verifica se o elemento estava realmente intersectado/acionado
+                this._onClick = (evt) => {
+                    if (this._dragging) return;
+                    // Se estiver sendo apontado por controlador (_isPointed) ou o evento contém interseção, permitir
+                    const detail = evt && evt.detail ? evt.detail : null;
+                    const targetEl = detail && (detail.intersectedEl || (detail.intersection && detail.intersection.object && detail.intersection.object.el));
+                    if (!this._isPointed) {
+                        if (!targetEl) return;
+                        if (targetEl !== this.el) return;
+                    }
+                    // Se o elemento possui uma ação declarada, despacha para o handler
+                    try { evt.stopPropagation(); } catch (e) {}
+                    try { evt.stopImmediatePropagation(); } catch (e) {}
+                    const action = this.el.dataset.action;
+                    if (action) {
+                        handleAction(action, this.el);
+                        return;
+                    }
+                    // Comportamento padrão (hotspot de voltar)
+                    voltarParaCampus();
+                };
+
+                this.el.addEventListener('click', this._onClick);
+
+                // Raycaster events (controllers) - define quando um controlador está apontando para este elemento
+                this._onRayIntersect = () => { this._isPointed = true; };
+                this._onRayClear = () => { this._isPointed = false; };
+
+                this.el.addEventListener('raycaster-intersected', this._onRayIntersect);
+                this.el.addEventListener('raycaster-intersected-cleared', this._onRayClear);
+
+                // Eventos de trigger dos controladores (A-Frame emite 'triggerdown' no controller/scene)
+                const sceneEl = this.el.sceneEl || document.querySelector('a-scene');
+                this._onTriggerDown = (evt) => {
+                    if (this._dragging) return;
+                    if (!this._isPointed) return;
+
+                    // Tenta resolver a interseção atual do raycaster (camera)
+                    const cameraEl = document.querySelector('#camera');
+                    let isTopIntersect = true;
+                    if (cameraEl && cameraEl.components && cameraEl.components.raycaster) {
+                        const rc = cameraEl.components.raycaster;
+                        if (typeof rc.getIntersection === 'function') {
+                            const inter = rc.getIntersection(this.el);
+                            isTopIntersect = !!inter;
+                        } else if (rc.intersections && rc.intersections.length) {
+                            // procura se a interseção mais próxima corresponde a este elemento
+                            const first = rc.intersections[0];
+                            isTopIntersect = !!(first && ((first.object && first.object.el === this.el) || first.el === this.el));
+                        }
+                    }
+
+                    if (!isTopIntersect) return;
+
+                    try { evt.stopPropagation(); } catch (e) {}
+                    try { evt.stopImmediatePropagation(); } catch (e) {}
+
+                    const action = this.el.dataset.action;
+                    if (action) {
+                        handleAction(action, this.el);
+                        return;
+                    }
+
+                    voltarParaCampus();
+                };
+
+                if (sceneEl) {
+                    sceneEl.addEventListener('triggerdown', this._onTriggerDown);
+                }
+            },
+            remove: function() {
+                window.removeEventListener('pointerdown', this._onPointerDown);
+                window.removeEventListener('pointermove', this._onPointerMove);
+                window.removeEventListener('pointerup', this._onPointerUp);
+                this.el.removeEventListener('click', this._onClick);
+
+                this.el.removeEventListener('raycaster-intersected', this._onRayIntersect);
+                this.el.removeEventListener('raycaster-intersected-cleared', this._onRayClear);
+
+                const sceneEl = this.el.sceneEl || document.querySelector('a-scene');
+                if (sceneEl) {
+                    sceneEl.removeEventListener('triggerdown', this._onTriggerDown);
+                }
+            }
+        });
+
+        // Inicializar quando A-Frame estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', inicializarVisualizador);
+        } else {
+            inicializarVisualizador();
+        }
+
+        // Eventos UI
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnCat = document.getElementById('btn-categorias');
+            if (btnCat) btnCat.addEventListener('click', () => toggleCategorias());
+            // renderizar categorias no drawer
+            renderizarCategorias();
+            // o painel VR será populado ao abrir o menu em VR
+            // setup de detecção de clique fora do painel
+            setupPanelClickDetection();
+        });
+
+        // Mostrar o hotspot do menu apenas ao entrar em VR e esconder ao sair
+        if (scene) {
+            scene.addEventListener('enter-vr', () => {
+                modoVRAtivo = true;
+                const hm = document.getElementById('hotspot-menu');
+                if (hm) hm.setAttribute('visible', true);
+            });
+
+            scene.addEventListener('exit-vr', () => {
+                modoVRAtivo = false;
+                const hm = document.getElementById('hotspot-menu');
+                if (hm) hm.setAttribute('visible', false);
+                const panel = document.getElementById('vr-menu-panel');
+                if (panel) {
+                    panel.setAttribute('visible', false);
+                    while (panel.firstChild) {
+                        panel.removeChild(panel.firstChild);
+                    }
+                    vrMenuStack = [];
+                    vrMenuPageIndex = 0;
+                }
+            });
+        }
+
+        // Fallback se A-Frame não carregar
+        window.addEventListener('error', (e) => {
+            if (e.filename && e.filename.includes('aframe')) {
+                console.error('Erro ao carregar A-Frame');
+                mostrarErro('Erro ao carregar o visualizador 3D. Verifique sua conexão.');
+            }
+        });
+    </script>
+</body>
+</html>
