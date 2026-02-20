@@ -302,8 +302,8 @@ const ambientes = [
     categoria: "Espaços Comuns",
     titulo: "Quiosques",
     descricao: "Espaços de convivência espalhados pelo campus.",
-    imagemPreview: "assets/img/quiosques-preview.jpg",
-    imagem360: "assets/360/quiosques-360.jpg",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1771597688/quiosques-preview_bhrv9s.jpg",
+    imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597663/quiosques-360_ua9rhh.jpg",
     disponivel: true,
     dataAdicao: "2025-02-25"
   },
