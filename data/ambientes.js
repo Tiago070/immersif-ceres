@@ -436,8 +436,8 @@ const ambientes = [
     categoria: "Setores de Produção",
     titulo: "Fábrica de Ração",
     descricao: "Instalação para produção de ração animal com equipamentos adequados.",
-    imagemPreview: "assets/img/fabrica-racao-preview.jpg",
-    imagem360: "assets/360/fabrica-racao-360.jpg",
+    imagemPreview: "./assets/img/fabrica-racao-preview.jpg",
+    imagem360: "./assets/360/fabrica-racao-360.jpg",
     disponivel: true,
     dataAdicao: "2025-03-05"
   },
