@@ -9,9 +9,9 @@
  */
 class MenuMobile {
     constructor() {
-        this.menuToggle = document.getElementById('menuToggle');
-        this.navbar = document.getElementById('navbar');
-        this.navLinks = document.querySelectorAll('.nav-link');
+        this.menuToggle = document.querySelector('.hamburger');
+        this.navbar = document.querySelector('nav');
+        this.navLinks = document.querySelectorAll('nav a');
         
         this.init();
     }
@@ -158,8 +158,10 @@ class SmoothScroll {
             e.preventDefault();
             
             // Calcula o offset para compensar o header fixo
-            const headerHeight = document.querySelector('.header').offsetHeight;
-            const navbarHeight = document.querySelector('.navbar').offsetHeight;
+            const header = document.querySelector('header');
+            const navbar = document.querySelector('nav');
+            const headerHeight = header ? header.offsetHeight : 0;
+            const navbarHeight = navbar ? navbar.offsetHeight : 0;
             const scrollPosition = targetElement.offsetTop - (headerHeight + navbarHeight);
             
             window.scrollTo({

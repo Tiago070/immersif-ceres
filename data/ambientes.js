@@ -298,6 +298,16 @@ const ambientes = [
 
   // ===== ESPAÇOS COMUNS =====
   {
+    id: "campus-ceres-aereo",
+    categoria: "Espaços Comuns",
+    titulo: "IF Goiano - Campus Ceres (Aéreo)",
+    descricao: "Visão aérea do Campus Ceres capturada por drone. Explore a vista panorâmica e inicie o tour 360° a partir daqui acessando o menu de ambientes no canto superior esquerdo.",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1771597674/campus-ceres-aereo-preview_edovrn.jpg",
+    imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597651/campus-ceres-aereo-360_rjg81m.jpg",
+    disponivel: true,
+    dataAdicao: "2026-02-16"
+  },
+  {
     id: "quiosques",
     categoria: "Espaços Comuns",
     titulo: "Quiosques",
@@ -460,18 +470,7 @@ const ambientes = [
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597660/mecanizacao-agricola-360_hf8tg4.jpg",
     disponivel: true,
     dataAdicao: "2025-03-05"
-  }
-  ,
-  {
-    id: "campus-ceres-aereo",
-    categoria: "Espaços Comuns",
-    titulo: "IF Goiano - Campus Ceres (Aéreo)",
-    descricao: "Visão aérea do Campus Ceres capturada por drone. Explore a vista panorâmica e inicie o tour 360° a partir daqui acessando o menu de ambientes no canto superior esquerdo.",
-    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1771597674/campus-ceres-aereo-preview_edovrn.jpg",
-    imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597651/campus-ceres-aereo-360_rjg81m.jpg",
-    disponivel: true,
-    dataAdicao: "2026-02-16"
-  }
+  },
 ];
 
 /**
