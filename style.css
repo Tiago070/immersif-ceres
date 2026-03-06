@@ -826,12 +826,6 @@ main {
     /* Espaço reservado para modo escuro */
 }
 
-/* Modo Alto Contraste */
-@media (prefers-contrast: more) {
-    --color-primary: #0d1b4d;
-    --color-accent: #ff8c00;
-}
-
 /* Redução de Movimento */
 @media (prefers-reduced-motion: reduce) {
     * {

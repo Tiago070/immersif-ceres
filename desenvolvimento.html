@@ -19,14 +19,50 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E3A8A' width='100' height='100'/><text x='50' y='75' font-size='60' fill='%23F97316' text-anchor='middle' font-weight='bold'>I</text></svg>">
+    
+    <style>
+        /* Responsividade para desenvolvimento.html */
+        pre {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
+        
+        @media (max-width: 767px) {
+            pre {
+                font-size: 10px !important;
+                padding: 12px !important;
+            }
+            
+            .camadas-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            
+            .camadas-grid div {
+                padding: 8px !important;
+                font-size: 12px !important;
+            }
+        }
+        
+        @media (min-width: 768px) and (max-width: 1023px) {
+            pre {
+                font-size: 11px !important;
+                padding: 14px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- HEADER E NAVEGAÇÃO -->
     <header>
         <div class="header-container">
             <div class="logo">
-                <div class="logo-icon">I</div>
-                <span>ImmersIF Ceres</span>
+                <a href="index.html" style="text-decoration: none; color: inherit;">
+                    <div class="logo-icon">I</div>
+                    <span>ImmersIF Ceres</span>
+                </a>
             </div>
             
             <button class="hamburger" aria-label="Menu de navegação" aria-expanded="false">
@@ -74,10 +110,10 @@
                         Atualmente, o projeto encontra-se na <strong>primeira fase de desenvolvimento</strong>, focando na criação de uma <strong>plataforma web responsiva</strong> e modular como base para futuras expansões.
                     </p>
                     <ul class="list-styled" style="margin-top: 16px;">
-                        <li>Site institucional com HTML5, CSS3 e JavaScript puro</li>
-                        <li>Sistema de renderização dinâmica de ambientes</li>
-                        <li>Integração inicial com tours Thinglink</li>
-                        <li>Estrutura preparada para visualizador 360° customizado</li>
+                        <li>Site institucional com HTML5, CSS3 e JavaScript</li>
+                        <li>Sistema visualizador 360° customizado de ambientes com A-frame</li>
+                        <li>Integração inicial com Thinglink</li>
+                        <li>Estrutura preparada para navegação em VR independente</li>
                     </ul>
                 </div>
             </div>
@@ -198,7 +234,7 @@
 
                     <div style="background-color: white; padding: 24px; border-radius: 12px; border: 1px solid #E5E7EB;">
                         <h4 style="margin-bottom: 12px;">🏗️ Camadas de Arquitetura</h4>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px;" class="camadas-grid">
                             <div style="background-color: #1E3A8A; color: white; padding: 12px; border-radius: 8px;">
                                 <strong>Apresentação:</strong> HTML5 semântico + CSS3 responsivo
                             </div>

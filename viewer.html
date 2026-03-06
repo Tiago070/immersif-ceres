@@ -325,17 +325,10 @@
                 alt="Ambiente 360°">
             </a-sky>
 
-            <!-- Hotspot que abre o menu VR (aparece apenas em VR) - posicionado à frente e abaixo -->
-            <a-entity id="hotspot-menu" position="0 0 -3" visible="false">
-                <a-sphere id="hotspot-menu-bola" class="hotspot" radius="0.25" position="0 0 0" material="color: #F97316; opacity: 0.95; shader: standard" data-action="toggle-vr-menu" clickable></a-sphere>
-                <a-text value="≡" position="0 0 0.27" align="center" color="#FFFFFF" scale="0.8 0.8 0.8" width="2"></a-text>
-                <a-plane position="0 -0.6 0.02" width="1.4" height="0.36" color="#000000" opacity="0.45" material="shader: flat"></a-plane>
-                <a-text id="hotspot-menu-label" value="Menu" position="0 -0.6 0.03" align="center" color="#FFFFFF" scale="1.5 1.5 1.5" width="2"></a-text>
-            </a-entity>
 
             <!-- Hotspot para Voltar: esfera pequena com ícone e rótulo abaixo -->
             <!-- Posicionado à direita/lado para não interferir com menu -->
-            <a-entity id="hotspot-voltar" position="2 0 -2">
+            <a-entity id="hotspot-voltar" position="2 0 -2" visible="false">
                 <!-- Bola pequena clicável -->
                 <a-sphere id="hotspot-bola" class="hotspot" radius="0.25" position="0 0 0" material="color: #DC2626; opacity: 0.95; shader: standard" clickable
                     animation__pulse="property: scale; dir: alternate; dur: 1200; loop: true; to: 1.12"/>
@@ -1170,7 +1163,16 @@
                         return;
                     }
                     // Comportamento padrão (hotspot de voltar)
-                    voltarParaCampus();
+                    if (modoVRAtivo) {
+                        // Se estiver em VR, sair do modo VR
+                        const scene = document.querySelector('a-scene');
+                        if (scene && scene.exitVR) {
+                            scene.exitVR();
+                        }
+                    } else {
+                        // Se não estiver em VR, voltar para campus
+                        voltarParaCampus();
+                    }
                 };
 
                 this.el.addEventListener('click', this._onClick);
@@ -1261,12 +1263,21 @@
                 modoVRAtivo = true;
                 const hm = document.getElementById('hotspot-menu');
                 if (hm) hm.setAttribute('visible', true);
+                // Mostrar hotspot voltar em VR
+                const hv = document.getElementById('hotspot-voltar');
+                if (hv) hv.setAttribute('visible', true);
+                // Ocultar menu da UI em VR
+                const uiOverlay = document.querySelector('.ui-overlay');
+                if (uiOverlay) uiOverlay.style.display = 'none';
             });
 
             scene.addEventListener('exit-vr', () => {
                 modoVRAtivo = false;
                 const hm = document.getElementById('hotspot-menu');
                 if (hm) hm.setAttribute('visible', false);
+                // Ocultar hotspot voltar ao sair de VR
+                const hv = document.getElementById('hotspot-voltar');
+                if (hv) hv.setAttribute('visible', false);
                 const panel = document.getElementById('vr-menu-panel');
                 if (panel) {
                     panel.setAttribute('visible', false);
@@ -1276,6 +1287,9 @@
                     vrMenuStack = [];
                     vrMenuPageIndex = 0;
                 }
+                // Mostrar menu da UI ao sair de VR
+                const uiOverlay = document.querySelector('.ui-overlay');
+                if (uiOverlay) uiOverlay.style.display = 'block';
             });
         }
 
