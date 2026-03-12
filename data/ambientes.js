@@ -12,7 +12,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "Laboratório de Informática",
     descricao: "Espaço equipado com computadores de alta performance para ensino de programação, desenvolvimento de software e pesquisa em tecnologia.",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773334750/lab-informatica-preview_pfrzo4.jpg",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597658/lab-informatica-360_nbdgmv.jpg",
     disponivel: true,
     dataAdicao: "2025-01-15"
@@ -22,7 +22,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "Laboratório de Robótica",
     descricao: "Atua no âmbito do Núcleo de Estudos e Pesquisa em Tecnologia da Informação (NEPeTI), com capacitação, pesquisa e inovação em Tecnologias Emergentes como Impressão 3D, Realidade Virtual e Robótica",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773334751/lab-robotica-preview_vhlgyp.jpg",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597661/lab-robotica-360_lfhrv2.jpg",
     disponivel: true,
     dataAdicao: "2025-02-01"
@@ -52,7 +52,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "Fábrica de Software",
     descricao: "Centro de desenvolvimento de soluções de software com metodologias ágeis, simulando ambientes corporativos de produção.",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773335513/fab-software-preview_s9jv81.jpg",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597652/fabrica-software-360_sq8ywn.jpg",
     disponivel: true,
     dataAdicao: "2025-02-05"
@@ -62,7 +62,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "GPSaCA",
     descricao: "Grupo de Pesquisa sobre Sáude da Criança e do Adolescente atuando em pesquisa e extensão no campo da saúde.",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773336142/gpsaca-preview_d3ofkk.png",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597656/gpsaca-360_lw4eop.jpg",
     disponivel: true,
     dataAdicao: "2025-02-05"
@@ -72,7 +72,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "CEBIO",
     descricao: "Centro de Excelência em Bioinsumos dedicado à pesquisa e inovação sustentável.",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773336032/cebio-preview_lpxnfz.png",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597651/cebio-360_ji1x4k.jpg",
     disponivel: true,
     dataAdicao: "2025-02-05"
@@ -102,7 +102,7 @@ const ambientes = [
     categoria: "Laboratórios",
     titulo: "LabTI",
     descricao: "Laboratório de Tecnologias de Irrigação com infraestrutura para pesquisa e desenvolvimento.",
-    imagemPreview: "#",
+    imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1773335735/labti-preview_gvvu4f.png",
     imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597662/labti-360_ou4izo.jpg",
     disponivel: true,
     dataAdicao: "2025-02-05"
