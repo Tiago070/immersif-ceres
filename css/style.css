@@ -221,6 +221,21 @@ header {
   font-weight: var(--font-weight-bold);
 }
 
+.logo-image {
+  height: 72px;
+  width: auto;
+  max-width: 280px;
+  object-fit: contain;
+}
+
+/* Mobile Logo */
+@media (max-width: 767px) {
+  .logo-image {
+    height: 56px;
+    max-width: 240px;
+  }
+}
+
 /* Menu de Hambúrguer (Mobile) */
 .hamburger {
   display: flex;
