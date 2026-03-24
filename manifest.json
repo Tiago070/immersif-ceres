@@ -39,26 +39,13 @@
   ],
   "shortcuts": [
     {
-      "name": "Campus Ceres",
-      "short_name": "Campus",
+      "name": "Tour Virtual",
+      "short_name": "Tour",
       "description": "Explore os ambientes do campus",
-      "url": "/campus.html",
+      "url": "/tour-campus.html",
       "icons": [
         {
           "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%231E3A8A' width='96' height='96'/><text x='48' y='72' font-size='50' fill='%23F97316' text-anchor='middle' font-weight='bold'>🏫</text></svg>",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
-    },
-    {
-      "name": "Tour Virtual",
-      "short_name": "Tour",
-      "description": "Visite o tour virtual 360°",
-      "url": "/tour.html",
-      "icons": [
-        {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%231E3A8A' width='96' height='96'/><text x='48' y='72' font-size='50' fill='%23F97316' text-anchor='middle' font-weight='bold'>🎥</text></svg>",
           "sizes": "96x96",
           "type": "image/svg+xml"
         }

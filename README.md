@@ -18,10 +18,13 @@
 ## ✨ Funcionalidades Principais
 
 - 🏠 **Página Inicial** - Hero section com apresentação institucional
-- 📘 **Sobre o Projeto** - Objetivos, justificativa e arquitetura técnica
-- 🏫 **Campus Ceres** - Catálogo interativo de ambientes com filtros dinâmicos
-- 🎥 **Tour Virtual** - Integração com tours 360° via Thinglink
-- ⚙️ **Desenvolvimento** - Roadmap técnico e justificativa de escolhas
+- 📘 **Projeto & Desenvolvimento** - Integração unificada com abas:
+  - Sobre o Projeto: Objetivos, justificativa e beneficiários
+  - Desenvolvimento Técnico: Arquitetura, roadmap e stack tecnológico
+- 🏫 **Campus Ceres** - Catálogo interativo de ambientes com filtros dinâmicos + Tour Virtual Integrado:
+  - Experiência Imersiva: Preview aéreo do campus
+  - Como Usar o Tour: Instruções para desktop, mobile e VR
+  - Acesso direto ao visualizador 360°
 - 📧 **Contato** - Formulário interativo e informações de contato
 - 👓 **Visualizador 360°** - Visualizador imersivo com suporte A-Frame/WebXR
 - 📱 **Design Responsivo** - Otimizado para mobile, tablet e desktop
@@ -83,12 +86,10 @@
 
 ```
 ImmersIF Ceres/
-├── 📄 Páginas HTML (7 arquivos)
+├── 📄 Páginas HTML (5 arquivos)
 │   ├── index.html              # Página inicial com hero
-│   ├── projeto.html            # Sobre objetivos e arquitetura
-│   ├── campus.html             # Ambientes com renderização dinâmica
-│   ├── tour.html               # Tour virtual 360°
-│   ├── desenvolvimento.html    # Info técnica e roadmap
+│   ├── projeto-desenvolvimento.html  # Integração: Projeto & Desenvolvimento (com abas)
+│   ├── tour-campus.html        # Tour Virtual + Campus Ceres Integrado
 │   ├── contato.html            # Formulário de contato
 │   └── viewer.html             # Visualizador A-Frame/WebXR
 │
@@ -105,15 +106,7 @@ ImmersIF Ceres/
 │       └── ambientes.js        # Dados dos ambientes (100+ linhas)
 │
 ├── 📚 Documentação
-│   ├── README.md               # Esta documentação
-│   ├── DEPLOYMENT.md           # Guia de hospedagem
-│   ├── MAINTENANCE.md          # Guia de manutenção
-│   ├── QUICK-START.md          # Início rápido
-│   └── outros arquivos...      # Documentação adicional
-│
-├── 📱 Assets (estrutura preparada)
-│   ├── assets/img/             # Imagens preview dos ambientes
-│   └── assets/360/             # Imagens 360° dos ambientes
+│   └── README.md               # Esta documentação
 │
 └── ⚙️ Configuração
     ├── manifest.json           # PWA (Progressive Web App)
@@ -273,6 +266,42 @@ Consulte `DEPLOYMENT.md` para instruções detalhadas.
 - Coleta de dados educacionais
 - Métricas de uso
 - Publicações científicas
+
+## 🎯 Sistema de Abas Integrado
+
+A partir da versão integrada, as páginas de **Projeto** e **Desenvolvimento** foram unificadas em uma única página (`projeto-desenvolvimento.html`) com um sistema de abas interativas:
+
+### Estrutura de Abas
+```
+┌─────────────────────────────────────────┐
+│  📋 Sobre o Projeto │ ⚙️ Desenvolvimento │
+├─────────────────────────────────────────┤
+│                                         │
+│  Conteúdo específico de cada aba        │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### Conteúdo por Aba
+
+**📋 Sobre o Projeto:**
+- Apresentação geral do projeto PIBITI
+- Objetivos (Geral e Específicos)
+- Justificativas (5 pilares de importância)
+- Beneficiários (Discentes, Instituição, Pesquisadores)
+
+**⚙️ Desenvolvimento Técnico:**
+- Status atual (Fase 1: Fundação Web)
+- Desenvolvimento autoral futuro (Fases 2-5)
+- Arquitetura do sistema em camadas
+- Roadmap completo de evolução
+- Stack tecnológico (Frontend, Integração, Backend)
+- Justificativa técnica para desenvolvimento próprio
+
+### Navegação
+- **Via Menu:** Clique em "Projeto & Desenvolvimento" na navegação principal
+- **Dentro da página:** Use os botões de abas para alternar entre visões
+- **Responsivo:** Abas adaptam-se para mobile (layout em coluna)
 
 ## 🤝 Contribuição
 
