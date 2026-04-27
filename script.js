@@ -1,5 +1,5 @@
 /* ===============================================
-   SCRIPT PRINCIPAL - ImmersIF Ceres
+   SCRIPT PRINCIPAL - ImersaLab
    Projeto PIBITI - Tecnologias Imersivas
    =============================================== */
 
@@ -394,7 +394,7 @@ class ThemeToggle {
  * Executa as classes quando o DOM está pronto
  */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('ImmersIF Ceres - Site Inicializado');
+    console.log('ImersaLab - Site Inicializado');
 
     // Inicializa o menu mobile
     const menuMobile = new MenuMobile();

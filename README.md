@@ -1,4 +1,4 @@
-# ImmersIF Ceres
+# ImersaLab
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://tiago070.github.io/immersif-ceres/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -11,7 +11,7 @@
 
 ## 📋 Sumário Executivo
 
-**ImmersIF Ceres** é uma plataforma web inovadora desenvolvida no âmbito do Programa Institucional de Bolsas de Iniciação em Desenvolvimento Tecnológico e Inovação (PIBITI) do IF Goiano – Campus Ceres. O projeto utiliza tecnologias imersivas, especialmente tours virtuais em 360° e realidade virtual (VR), como estratégia de divulgação científica e educacional, democratizando o acesso aos ambientes institucionais de forma inovadora e acessível.
+**ImersaLab** é uma plataforma web inovadora desenvolvida no âmbito do Programa Institucional de Bolsas de Iniciação em Desenvolvimento Tecnológico e Inovação (PIBITI) do IF Goiano – Campus Ceres. O projeto utiliza tecnologias imersivas, especialmente tours virtuais em 360° e realidade virtual (VR), como estratégia de divulgação científica e educacional, democratizando o acesso aos ambientes institucionais de forma inovadora e acessível.
 
 **🎯 Objetivo Geral:** Criar e disponibilizar uma plataforma responsiva e modular de tours virtuais 360° que permita a exploração digital dos espaços científicos, educacionais e institucionais do IF Goiano – Campus Ceres, ampliando o acesso à informação e experiências educacionais além de barreiras geográficas e temporais.
 
@@ -85,7 +85,7 @@
 ## 📁 Estrutura do Projeto
 
 ```
-ImmersIF Ceres/
+ImersaLab/
 ├── 📄 Páginas HTML (5 arquivos)
 │   ├── index.html              # Página inicial com hero
 │   ├── projeto-desenvolvimento.html  # Integração: Projeto & Desenvolvimento (com abas)

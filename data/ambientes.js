@@ -343,7 +343,7 @@ const ambientes = [
     titulo: "Biblioteca",
     descricao: "Centro de recursos informacionais com salão de estudos e acervo de livros, revistas e acesso a bases de dados para pesquisa.",
     imagemPreview: "https://res.cloudinary.com/duay00cii/image/upload/v1771597672/biblioteca-preview_bf1gfi.jpg",
-    imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1771597644/biblioteca-360_nmrtl9.jpg",
+    imagem360: "https://res.cloudinary.com/duay00cii/image/upload/v1777311556/Acervo_de_Livros_syxsxq.jpg",
     disponivel: true,
     dataAdicao: "2025-01-15"
   },
