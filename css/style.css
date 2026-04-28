@@ -520,6 +520,21 @@ section {
   margin-top: var(--spacing-xl);
 }
 
+.contact-cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+}
+
+.contact-cards-grid .info-card {
+  flex: 1 1 340px;
+  max-width: 380px;
+}
+
 @media (min-width: 480px) {
   .cards-grid {
     gap: var(--spacing-lg);
@@ -529,6 +544,10 @@ section {
 @media (min-width: 768px) {
   .cards-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards-grid.contact-cards-grid {
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
   }
 }
 
