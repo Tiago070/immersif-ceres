@@ -2,6 +2,7 @@
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://tiago070.github.io/immersif-ceres/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE-CC-BY-4.0)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -117,6 +118,13 @@ O projeto está organizado como:
 - Atualize a documentação sempre que fizer mudanças de estrutura
 
 ## 📄 Licença
+
+- Código e software: licenciado sob **MIT License**.
+- Conteúdo, imagens, textos e material criativo: licenciado sob **Creative Commons Attribution 4.0 International (CC BY 4.0)**.
+
+Arquivos de licença:
+- [MIT License](LICENSE)
+- [CC BY 4.0 License](LICENSE-CC-BY-4.0)
 
 Este projeto está licenciado sob a **MIT License**. Veja o arquivo `LICENSE` para detalhes.
 
