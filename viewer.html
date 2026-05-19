@@ -317,16 +317,11 @@
             <a-camera id="camera" position="0 1.6 0" look-controls="reverseMouseDrag: false" cursor="rayOrigin: mouse" raycaster="objects: .hotspot, .vr-ui">
                 <!-- Painel VR ancorado à câmera (fica visível em VR quando ativado) -->
                 <a-entity id="vr-menu-panel" position="0 -0.4 -1.2" visible="false"></a-entity>
-                <!-- Botão de saída de VR fixo para controle Meta Quest -->
-                <a-entity id="vr-exit-button" position="0 -0.8 -1.2" visible="false">
-                    <a-plane width="0.6" height="0.18" color="#DC2626" opacity="0.95" class="vr-ui" clickable data-action="sair-vr"></a-plane>
-                    <a-text value="Sair VR" align="center" color="#FFFFFF" width="0.9" position="0 0 0.01" scale="0.5 0.5 0.5"></a-text>
-                </a-entity>
             </a-camera>
 
             <!-- VR Controllers for Meta Quest and other WebXR devices -->
-            <a-entity laser-controls="hand: left" raycaster="objects: .hotspot, .vr-ui" line="color: #F97316; opacity: 0.8"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .hotspot, .vr-ui" line="color: #F97316; opacity: 0.8"></a-entity>
+            <a-entity laser-controls="hand: left" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
 
             <!-- Imagem 360° (Photosphere) -->
             <a-sky id="sky" 
@@ -664,6 +659,34 @@
          */
         function voltarParaCampus() {
             window.location.href = 'index.html';
+        }
+
+        function sairModoVR() {
+            const sceneEl = document.querySelector('a-scene');
+            if (sceneEl && sceneEl.exitVR) {
+                sceneEl.exitVR();
+                mostrarNotificacao('Saindo do modo VR...', 'info', 1800);
+            }
+        }
+
+        function setupVrControllerButtons() {
+            const sceneEl = document.querySelector('a-scene');
+            if (!sceneEl) return;
+
+            sceneEl.addEventListener('abuttondown', () => {
+                if (modoVRAtivo) {
+                    sairModoVR();
+                }
+            });
+
+            const hotspotSphere = document.getElementById('hotspot-bola');
+            if (hotspotSphere) {
+                hotspotSphere.addEventListener('triggerdown', () => {
+                    if (modoVRAtivo) {
+                        sairModoVR();
+                    }
+                });
+            }
         }
 
         /**
@@ -1297,6 +1320,7 @@
             // o painel VR será populado ao abrir o menu em VR
             // setup de detecção de clique fora do painel
             setupPanelClickDetection();
+            setupVrControllerButtons();
         });
 
         // Mostrar o hotspot do menu apenas ao entrar em VR e esconder ao sair
@@ -1308,8 +1332,6 @@
                 // Mostrar hotspot voltar em VR
                 const hv = document.getElementById('hotspot-voltar');
                 if (hv) hv.setAttribute('visible', true);
-                const exitBtn = document.getElementById('vr-exit-button');
-                if (exitBtn) exitBtn.setAttribute('visible', true);
                 // Ocultar menu da UI em VR
                 const uiOverlay = document.querySelector('.ui-overlay');
                 if (uiOverlay) uiOverlay.style.display = 'none';
@@ -1322,8 +1344,6 @@
                 // Ocultar hotspot voltar ao sair de VR
                 const hv = document.getElementById('hotspot-voltar');
                 if (hv) hv.setAttribute('visible', false);
-                const exitBtn = document.getElementById('vr-exit-button');
-                if (exitBtn) exitBtn.setAttribute('visible', false);
                 const panel = document.getElementById('vr-menu-panel');
                 if (panel) {
                     panel.setAttribute('visible', false);
