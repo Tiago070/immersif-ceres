@@ -319,6 +319,10 @@
                 <a-entity id="vr-menu-panel" position="0 -0.4 -1.2" visible="false"></a-entity>
             </a-camera>
 
+            <!-- VR Controllers for Meta Quest and other WebXR devices -->
+            <a-entity laser-controls="hand: left" raycaster="objects: .hotspot, .vr-ui" line="color: #F97316; opacity: 0.8"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .hotspot, .vr-ui" line="color: #F97316; opacity: 0.8"></a-entity>
+
             <!-- Imagem 360° (Photosphere) -->
             <a-sky id="sky" 
                 src="assets/360/lab-informatica-360.jpg" 
@@ -1191,18 +1195,27 @@
                     if (this._dragging) return;
                     if (!this._isPointed) return;
 
-                    // Tenta resolver a interseção atual do raycaster (camera)
-                    const cameraEl = document.querySelector('#camera');
                     let isTopIntersect = true;
-                    if (cameraEl && cameraEl.components && cameraEl.components.raycaster) {
-                        const rc = cameraEl.components.raycaster;
-                        if (typeof rc.getIntersection === 'function') {
-                            const inter = rc.getIntersection(this.el);
-                            isTopIntersect = !!inter;
-                        } else if (rc.intersections && rc.intersections.length) {
-                            // procura se a interseção mais próxima corresponde a este elemento
-                            const first = rc.intersections[0];
-                            isTopIntersect = !!(first && ((first.object && first.object.el === this.el) || first.el === this.el));
+                    if (evt && evt.detail) {
+                        const detail = evt.detail;
+                        const intersectionEl = detail.intersectedEl || (detail.intersection && detail.intersection.object && detail.intersection.object.el);
+                        if (intersectionEl && intersectionEl !== this.el) {
+                            isTopIntersect = false;
+                        }
+                    }
+
+                    // Fallback para câmera desktop/mouse
+                    if (isTopIntersect && evt && evt.detail && !evt.detail.intersectedEl) {
+                        const cameraEl = document.querySelector('#camera');
+                        if (cameraEl && cameraEl.components && cameraEl.components.raycaster) {
+                            const rc = cameraEl.components.raycaster;
+                            if (typeof rc.getIntersection === 'function') {
+                                const inter = rc.getIntersection(this.el);
+                                isTopIntersect = !!inter;
+                            } else if (rc.intersections && rc.intersections.length) {
+                                const first = rc.intersections[0];
+                                isTopIntersect = !!(first && ((first.object && first.object.el === this.el) || first.el === this.el));
+                            }
                         }
                     }
 
@@ -1217,7 +1230,14 @@
                         return;
                     }
 
-                    voltarParaCampus();
+                    if (modoVRAtivo) {
+                        const scene = document.querySelector('a-scene');
+                        if (scene && scene.exitVR) {
+                            scene.exitVR();
+                        }
+                    } else {
+                        voltarParaCampus();
+                    }
                 };
 
                 if (sceneEl) {
