@@ -320,8 +320,8 @@
             </a-camera>
 
             <!-- VR Controllers for Meta Quest and other WebXR devices -->
-            <a-entity laser-controls="hand: left" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
-            <a-entity laser-controls="hand: right" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
+            <a-entity id="laser-left" laser-controls="hand: left" visible="false" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
+            <a-entity id="laser-right" laser-controls="hand: right" visible="false" raycaster="objects: .hotspot, .vr-ui; showLine: true; far: 30" line="color: #F97316; opacity: 0.8"></a-entity>
 
             <!-- Imagem 360° (Photosphere) -->
             <a-sky id="sky" 
@@ -686,6 +686,28 @@
                         sairModoVR();
                     }
                 });
+            }
+        }
+
+        // Show lasers only when controllers are connected to avoid ghost/phantom lasers
+        function setupLaserVisibility() {
+            const left = document.getElementById('laser-left');
+            const right = document.getElementById('laser-right');
+
+            function hide(ent) { if (ent) ent.setAttribute('visible', 'false'); }
+            function show(ent) { if (ent) ent.setAttribute('visible', 'true'); }
+
+            hide(left); hide(right);
+
+            [left, right].forEach(ent => {
+                if (!ent) return;
+                ent.addEventListener('controllerconnected', () => show(ent));
+                ent.addEventListener('controllerdisconnected', () => hide(ent));
+            });
+
+            const sceneEl = document.querySelector('a-scene');
+            if (sceneEl) {
+                sceneEl.addEventListener('exit-vr', () => { hide(left); hide(right); });
             }
         }
 
@@ -1321,6 +1343,7 @@
             // setup de detecção de clique fora do painel
             setupPanelClickDetection();
             setupVrControllerButtons();
+            setupLaserVisibility();
         });
 
         // Mostrar o hotspot do menu apenas ao entrar em VR e esconder ao sair
